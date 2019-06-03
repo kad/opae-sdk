@@ -414,7 +414,7 @@ TEST_P(userclk_c_p, main2) {
 }
 
 INSTANTIATE_TEST_CASE_P(userclk_c, userclk_c_p,
-                        ::testing::ValuesIn(test_platform::platforms({})));
+                        ::testing::ValuesIn(test_platform::platforms({"skx-p","skx-p-1vf","dcp-rc","dcp-vc"})));
 
 class userclk_c_hw_p : public userclk_c_p{
   protected:
