@@ -72,8 +72,8 @@ class usrclk_c
 
     ASSERT_EQ(xfpga_plugin_initialize(), FPGA_OK);
     ASSERT_EQ(xfpga_fpgaGetProperties(nullptr, &filter_dev_), FPGA_OK);
-    ASSERT_EQ(fpgaPropertiesSetDeviceID(filter_dev_,
-                                        platform_.devices[0].device_id), FPGA_OK);
+    ASSERT_EQ(fpgaPropertiesSetDeviceID(filter_dev_, 
+              platform_.devices[0].device_id), FPGA_OK);
     ASSERT_EQ(fpgaPropertiesSetObjectType(filter_dev_, FPGA_DEVICE), FPGA_OK);
     ASSERT_EQ(xfpga_fpgaEnumerate(&filter_dev_, 1, tokens_dev_.data(),
               tokens_dev_.size(), &num_matches_), FPGA_OK);
@@ -324,7 +324,7 @@ TEST_P(usrclk_mock_c, set_user_clock) {
 }
 
 INSTANTIATE_TEST_CASE_P(usrclk, usrclk_mock_c,
-                        ::testing::ValuesIn(test_platform::mock_platforms()));
+                        ::testing::ValuesIn(test_platform::mock_platforms({"skx-p","dcp-rc","dcp-vc","skx-p-1vf"})));
 
 class usrclk_hw_c : public usrclk_c {};
 

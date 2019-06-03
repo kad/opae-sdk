@@ -101,7 +101,7 @@ fpga_result read_sensor_sysfs_file(const char *sysfs, const char *file,
 
 	// fstat for a sysfs file is not accurate for the BMC
 	// Read the entire file into a temp buffer to get actual size of file
-	*buf = (void *)calloc(stats.st_size, 1);
+	*buf = (void *)calloc(2, stats.st_size);
 
 	int32_t tot_bytes = 0;
 	int32_t bytes_read = 0;

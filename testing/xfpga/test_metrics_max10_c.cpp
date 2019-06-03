@@ -98,15 +98,34 @@ class metrics_max10_c_p : public ::testing::TestWithParam<std::string> {
 };
 
 /**
-* @test       test_metric_max10_1
+* @test       pos_test_metric_max10_1
 * @brief      Tests: read_sensor_sysfs_file
 * @details    When the parameters are valid read_sensor_sysfs_file
 *             reads system attributes
-*             When the parameters are invalid read_sensor_sysfs_file
+*
+*/
+TEST_P(metrics_max10_c_p, pos_test_metric_max10_1) {
+  uint32_t tot_bytes_ret;
+  void *buf = NULL;
+  char file[] = "name";
+  char sysfs[] =
+      "/sys/class/fpga/intel-fpga-dev.0/intel-fpga-fme.0/spi-altera.0.auto/"
+      "spi_master/spi0/spi0.0/sensor2";
+
+  EXPECT_EQ(read_sensor_sysfs_file(sysfs, file, &buf, &tot_bytes_ret), FPGA_OK);
+
+  if (buf) 
+    free(buf);
+}
+
+/**
+* @test       neg_test_metric_max10_1
+* @brief      Tests: read_sensor_sysfs_file
+* @details    When the parameters are invalid read_sensor_sysfs_file
 *             retuns error.
 *
 */
-TEST_P(metrics_max10_c_p, test_metric_max10_1) {
+TEST_P(metrics_max10_c_p, neg_test_metric_max10_1) {
   uint32_t tot_bytes_ret;
   void *buf = NULL;
   char file[] = "name";
@@ -120,24 +139,21 @@ TEST_P(metrics_max10_c_p, test_metric_max10_1) {
 
   EXPECT_NE(read_sensor_sysfs_file(sysfs, NULL, &buf, NULL), FPGA_OK);
 
-  EXPECT_EQ(read_sensor_sysfs_file(sysfs, file, &buf, &tot_bytes_ret), FPGA_OK);
-
   EXPECT_NE(read_sensor_sysfs_file(sysfs, "test", &buf, &tot_bytes_ret),
             FPGA_OK);
 
-  if (buf) free(buf);
+  if (buf) 
+    free(buf);
 }
 
 /**
-* @test       test_metric_max10_2
+* @test       pos_test_metric_max10_2
 * @brief      Tests: enum_max10_metrics_info
 * @details    When the parameters are valid enum_max10_metrics_info
 *             eunum max10 metrics and add to vector
-*             When the parameters are invalid enum_max10_metrics_info
-*             retuns error.
 *
 */
-TEST_P(metrics_max10_c_p, test_metric_max10_2) {
+TEST_P(metrics_max10_c_p, pos_test_metric_max10_2) {
   struct _fpga_handle *_handle = (struct _fpga_handle *)handle_;
   fpga_metric_vector vector;
   uint64_t metric_num = 0;
@@ -146,6 +162,26 @@ TEST_P(metrics_max10_c_p, test_metric_max10_2) {
 
   EXPECT_EQ(FPGA_OK, enum_max10_metrics_info(_handle, &vector, &metric_num,
                                              FPGA_HW_DCP_VC));
+
+  EXPECT_EQ(FPGA_OK, enum_max10_metrics_info(_handle, &vector, &metric_num,
+                                             FPGA_HW_UNKNOWN));
+
+  EXPECT_EQ(FPGA_OK, fpga_vector_free(&vector));
+}
+
+/**
+* @test       neg_test_metric_max10_2
+* @brief      Tests: enum_max10_metrics_info
+* @details    When the parameters are invalid enum_max10_metrics_info
+*             retuns error.
+*
+*/
+TEST_P(metrics_max10_c_p, neg_test_metric_max10_2) {
+  struct _fpga_handle *_handle = (struct _fpga_handle *)handle_;
+  fpga_metric_vector vector;
+  uint64_t metric_num = 0;
+
+  EXPECT_EQ(FPGA_OK, fpga_vector_init(&vector));
 
   EXPECT_NE(FPGA_OK,
             enum_max10_metrics_info(_handle, &vector, NULL, FPGA_HW_DCP_VC));
@@ -159,11 +195,9 @@ TEST_P(metrics_max10_c_p, test_metric_max10_2) {
   EXPECT_NE(FPGA_OK,
             enum_max10_metrics_info(_handle, &vector, NULL, FPGA_HW_DCP_VC));
 
-  EXPECT_EQ(FPGA_OK, enum_max10_metrics_info(_handle, &vector, &metric_num,
-                                             FPGA_HW_UNKNOWN));
-
   EXPECT_EQ(FPGA_OK, fpga_vector_free(&vector));
 }
+
 INSTANTIATE_TEST_CASE_P(metrics_max10_c, metrics_max10_c_p,
     ::testing::ValuesIn(test_platform::mock_platforms({"dcp-vc"})));
 
